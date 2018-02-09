@@ -7,6 +7,9 @@ from scipy.misc import imread
 import sounddevice as sd
 import random as rand
 import numpy as np
+import serial
+
+ser = serial.Serial("/dev/ttyS0", 57600)
 
 xlimit = 20
 ylimit = 2
@@ -68,10 +71,8 @@ def animate(i):
     return line1, line2
 
 def file_input():
-    with open("input.txt") as f:
-        lines = f.read()
-        a1, f1, p1, a2, f2, p2 = lines.split()
-        return map_input(a1, f1, p1, a2, f2, p2)
+    a1, f1, p1, a2, f2, p2 = ser.readline().split()
+    return map_input(a1, f1, p1, a2, f2, p2)
 
 def map_input(a1, f1, p1, a2, f2, p2):
     a1 = float(a1)/mapping_max

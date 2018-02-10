@@ -7,8 +7,8 @@ import numpy as np
 import serial
 import os
 
-ser = serial.Serial("COM3", 57600)
-# ser = serial.Serial("/dev/ttyS0", 57600)
+#ser = serial.Serial("COM3", 57600)
+ser = serial.Serial("/dev/ttyS0", 57600)
 
 xlimit = 20
 ylimit = 2

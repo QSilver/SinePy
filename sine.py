@@ -2,14 +2,13 @@ import matplotlib.animation as animation
 import matplotlib.cbook as cbook
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
-from scipy.misc import imread
-import sounddevice as sd
 import random as rand
 import numpy as np
 import serial
+import os
 
-ser = serial.Serial("/dev/ttyS0", 57600)
+ser = serial.Serial("COM3", 57600)
+# ser = serial.Serial("/dev/ttyS0", 57600)
 
 xlimit = 20
 ylimit = 2
@@ -71,7 +70,11 @@ def animate(i):
     return line1, line2
 
 def file_input():
-    a1, f1, p1, a2, f2, p2 = ser.readline().split()
+    ser.reset_input_buffer()
+    line = ser.readline().split()
+    while len(line) != 6:
+        line = ser.readline().split()
+    a1, f1, p1, a2, f2, p2 = line
     return map_input(a1, f1, p1, a2, f2, p2)
 
 def map_input(a1, f1, p1, a2, f2, p2):

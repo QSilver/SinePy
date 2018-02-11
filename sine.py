@@ -65,6 +65,7 @@ def animate(i):
     generated = gen_sine1 + gen_sine2
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
+    print(equals(master_sine, generated, 10000))
     return line1, line2
 
 def file_input():
@@ -74,6 +75,11 @@ def file_input():
         line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line
     return map_input(a1, f1, p1, a2, f2, p2)
+
+def equals(graph1, graph2, errorMargin):
+    difference = graph1 - graph2
+    return all(arrayVal < errorMargin for arrayVal in difference)
+
 
 def map_input(a1, f1, p1, a2, f2, p2):
     a1 = float(a1)/mapping_max

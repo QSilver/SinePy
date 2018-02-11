@@ -8,7 +8,7 @@ import serial
 import os
 
 #ser = serial.Serial("COM3", 57600)
-#ser = serial.Serial("/dev/ttyS0", 57600)
+ser = serial.Serial("/dev/ttyS0", 57600)
 
 is_finished = False
 
@@ -78,8 +78,8 @@ def animate(i):
     return line1, line2
 
 def file_input():
-    #ser.reset_input_buffer()
-    line = [1018,818,0,818,767,0] #ser.readline().split()
+    ser.reset_input_buffer()
+    line = ser.readline().split() #[818,818,0,818,767,0]
     while len(line) != 6:
         line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line

@@ -8,7 +8,9 @@ import serial
 import os
 
 #ser = serial.Serial("COM3", 57600)
-ser = serial.Serial("/dev/ttyS0", 57600)
+#ser = serial.Serial("/dev/ttyS0", 57600)
+
+is_finished = False
 
 xlimit = 20
 ylimit = 2
@@ -19,7 +21,7 @@ mapping_max = 1023.0
 # First set up the figure, the axis, and the plot element we want to animate
 mpl.rcParams['toolbar'] = 'None'
 plt.rcParams['axes.facecolor'] = 'black'
-fig = plt.figure(facecolor='black')
+fig = plt.figure(0, facecolor='black')
 ax = plt.axes(xlim=(0, xlimit), ylim=(-ylimit, ylimit))
 plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 plt.rc('grid', linestyle="-", color='black')
@@ -39,12 +41,12 @@ def init():
 def create_sine(amplitude, phase, frequency, i):
     return np.sin(2 * np.pi * (x - phaseconstant * i + phase) * frequency) * amplitude
 
-def random():
+def generate_master():
     amplitude_m1 = 0.8#rand.random() * 0.2 + 1.0 #1.0 - 1.2
     amplitude_m2 = 0.8#rand.random() * 0.2 + 0.3 #0.3 - 0.5
 
-    frequency1 = 1#rand.random() * 0.5 + 0.25 #0.25 - 0.75
-    frequency2 = 0.95#rand.random() * 1.0 + 1.0 #1.0 - 2.0
+    frequency1 = 0.8#rand.random() * 0.5 + 0.25 #0.25 - 0.75
+    frequency2 = 0.75#rand.random() * 1.0 + 1.0 #1.0 - 2.0
 
     phase_m1 = 0#rand.random() * phaseconstant
     phase_m2 = 0#rand.random() * phaseconstant
@@ -58,19 +60,26 @@ def master(i):
 
 # animation function.  This is called sequentially
 def animate(i):
+    global is_finished
     master_sine = master(i)
     a1, f1, p1, a2, f2, p2 = file_input()
+    if is_finished == True:
+        a1, a2, f1, f2, p1, p2 = generate_master()
+        p1 = p1 + 0.05
+        p2 = p2 + 0.05
     gen_sine1 = create_sine(a1, p1, f1, i)
     gen_sine2 = create_sine(a2, p2, f2, i)
     generated = gen_sine1 + gen_sine2
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
-    print(equals(master_sine, generated, 0.2))
+    if equals(master_sine, generated, 0.2):
+        is_finished = True
+        display_win()
     return line1, line2
 
 def file_input():
-    ser.reset_input_buffer()
-    line = ser.readline().split()
+    #ser.reset_input_buffer()
+    line = [1018,818,0,818,767,0] #ser.readline().split()
     while len(line) != 6:
         line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line
@@ -80,7 +89,6 @@ def equals(graph1, graph2, errorMargin):
     difference = abs(graph1 - graph2)
     return all(arrayVal < errorMargin for arrayVal in difference)
 
-
 def map_input(a1, f1, p1, a2, f2, p2):
     a1 = float(a1)/mapping_max
     f1 = float(f1)/mapping_max
@@ -89,7 +97,20 @@ def map_input(a1, f1, p1, a2, f2, p2):
     f2 = float(f2)/mapping_max
     p2 = float(p2)/mapping_max
     return a1, f1, p1, a2, f2, p2
-    
-amplitude_m1, amplitude_m2, frequency1, frequency2, phase_m1, phase_m2 = random()
+
+def run_once(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+    wrapper.has_run = False
+    return wrapper
+
+@run_once
+def display_win():
+    print("Victory")
+    print("5898")
+
+amplitude_m1, amplitude_m2, frequency1, frequency2, phase_m1, phase_m2 = generate_master()
 anim = animation.FuncAnimation(fig, animate, init_func=init, interval=10, blit=True)
 plt.show()

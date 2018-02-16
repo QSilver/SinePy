@@ -67,8 +67,9 @@ def animate(i):
         a1, a2, f1, f2, p1, p2 = generate_master()
         p1 = p1 + 0.05
         p2 = p2 + 0.05
-    gen_sine1 = create_sine(a1, p1, f1, i)
-    gen_sine2 = create_sine(a2, p2, f2, i)
+    gp = p1 + p2
+    gen_sine1 = create_sine(a1, gp, f1, i)
+    gen_sine2 = create_sine(a2, gp, f2, i)
     generated = gen_sine1 + gen_sine2
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
@@ -91,10 +92,10 @@ def equals(graph1, graph2, errorMargin):
 
 def map_input(a1, f1, p1, a2, f2, p2):
     a1 = float(a1)/mapping_max
-    f1 = float(f1)/mapping_max
+    f1 = float(f1)/mapping_max/5+0.2
     p1 = float(p1)/mapping_max
     a2 = float(a2)/mapping_max
-    f2 = float(f2)/mapping_max
+    f2 = float(f2)/mapping_max/5+0.2
     p2 = float(p2)/mapping_max
     return a1, f1, p1, a2, f2, p2
 

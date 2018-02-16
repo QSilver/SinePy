@@ -4,11 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import random as rand
 import numpy as np
-import serial
+#import serial
 import os
 
+### AUDIO LIBRARY
+import pyaudio
+
 #ser = serial.Serial("COM3", 57600)
-ser = serial.Serial("/dev/ttyS0", 57600)
+#ser = serial.Serial("/dev/ttyS0", 57600)
 
 is_finished = False
 
@@ -31,6 +34,18 @@ plt.xticks(np.arange(0,xlimit,1))
 x = np.linspace(0, xlimit, xlimit*1000)
 line1, = ax.plot([], [], lw=linewidth)
 line2, = ax.plot([], [], lw=linewidth)
+
+
+# MI - Will be replaced with sine data
+aout = pyaudio.PyAudio()
+astm = aout.open(format=aout.get_format_from_width(2),
+                 channels=1,
+                 rate=44000,
+                 output=True)
+
+
+
+
 
 # initialization function: plot the background of each frame
 def init():
@@ -73,14 +88,26 @@ def animate(i):
     generated = gen_sine1 + gen_sine2
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
+
+    adata = generated.astype(np.int16)
+    adata = (adata+2)*32
+    adata = adata[::40]
+    adata = str(bytes(adata))
+    print()
+    print("Samples: ", adata)
+    print()
+    astm.write(adata)
+
     if equals(master_sine, generated, 0.2):
         is_finished = True
         display_win()
     return line1, line2
 
+
 def file_input():
-    ser.reset_input_buffer()
-    line = ser.readline().split() #[818,818,0,818,767,0]
+    #ser.reset_input_buffer()
+    #line = ser.readline().split() #
+    line = [818,818,0,818,767,0]
     while len(line) != 6:
         line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line
@@ -111,7 +138,7 @@ def run_once(f):
 def display_win():
     print("Victory")
     print("5898")
-
 amplitude_m1, amplitude_m2, frequency1, frequency2, phase_m1, phase_m2 = generate_master()
 anim = animation.FuncAnimation(fig, animate, init_func=init, interval=10, blit=True)
 plt.show()
+

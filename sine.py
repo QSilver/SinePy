@@ -92,11 +92,11 @@ def equals(graph1, graph2, errorMargin):
 
 def map_input(a1, f1, p1, a2, f2, p2):
     a1 = float(a1)/mapping_max
-    f1 = float(f1)/mapping_max/5+0.2
-    p1 = float(p1)/mapping_max
+    f1 = float(f1)/mapping_max/5+0.7
+    p1 = float(p1)/mapping_max*2
     a2 = float(a2)/mapping_max
-    f2 = float(f2)/mapping_max/5+0.2
-    p2 = float(p2)/mapping_max
+    f2 = float(f2)/mapping_max/5+0.7
+    p2 = float(p2)/mapping_max*2
     return a1, f1, p1, a2, f2, p2
 
 def run_once(f):

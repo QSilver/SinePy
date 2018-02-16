@@ -89,9 +89,14 @@ def animate(i):
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
 
-    adata = (generated+2)*32
+    adata = generated.astype(np.int16)
+    adata = (adata+2)*32
     adata = adata[::40]
-    astm.write(bytes(adata))
+    adata = str(bytes(adata))
+    print()
+    print("Samples: ", adata)
+    print()
+    astm.write(adata)
 
     if equals(master_sine, generated, 0.2):
         is_finished = True

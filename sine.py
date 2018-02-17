@@ -40,7 +40,7 @@ line2, = ax.plot([], [], lw=linewidth)
 aout = pyaudio.PyAudio()
 astm = aout.open(format=aout.get_format_from_width(2),
                  channels=1,
-                 rate=44000,
+                 rate=44100,
                  output=True)
 
 
@@ -89,14 +89,11 @@ def animate(i):
     line1.set_data(x, master_sine)
     line2.set_data(x, generated)
 
-    adata = generated.astype(np.int16)
-    adata = (adata+2)*32
-    adata = adata[::40]
-    adata = str(bytes(adata))
-    print()
-    print("Samples: ", adata)
-    print()
-    astm.write(adata)
+    data = generated.astype(np.int16)
+    data = data[::45]
+    data = data*32525
+#    adata = ("{:0>2x}" * len(data)).format(*tuple(data[::-1]))
+    astm.write(data)
 
     if equals(master_sine, generated, 0.2):
         is_finished = True
@@ -107,9 +104,12 @@ def animate(i):
 def file_input():
     #ser.reset_input_buffer()
     #line = ser.readline().split() #
-    line = [818,818,0,818,767,0]
-    while len(line) != 6:
-        line = ser.readline().split()
+    #line = [818,818,0,818,767,0]
+    line = [1024,1204,0,1024,512,512]
+    #for i in range(6):
+    #    line[i] = rand.randint(0,1024)
+    #while len(line) != 6:
+        #line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line
     return map_input(a1, f1, p1, a2, f2, p2)
 

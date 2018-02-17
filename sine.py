@@ -4,14 +4,15 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import random as rand
 import numpy as np
-#import serial
+import serial
+import sys
 import os
 
 ### AUDIO LIBRARY
 import pyaudio
 
 #ser = serial.Serial("COM3", 57600)
-#ser = serial.Serial("/dev/ttyS0", 57600)
+ser = serial.Serial("/dev/ttyS0", 57600)
 
 is_finished = False
 
@@ -95,21 +96,21 @@ def animate(i):
 #    adata = ("{:0>2x}" * len(data)).format(*tuple(data[::-1]))
     astm.write(data)
 
-    if equals(master_sine, generated, 0.2):
+    if equals(master_sine, generated, 200):
         is_finished = True
         display_win()
     return line1, line2
 
 
 def file_input():
-    #ser.reset_input_buffer()
-    #line = ser.readline().split() #
+    ser.reset_input_buffer()
+    line = ser.readline().split()
     #line = [818,818,0,818,767,0]
-    line = [1024,1204,0,1024,512,512]
+    #line = [1024,1204,0,1024,512,512]
     #for i in range(6):
     #    line[i] = rand.randint(0,1024)
-    #while len(line) != 6:
-        #line = ser.readline().split()
+    while len(line) != 6:
+        line = ser.readline().split()
     a1, f1, p1, a2, f2, p2 = line
     return map_input(a1, f1, p1, a2, f2, p2)
 
@@ -138,6 +139,8 @@ def run_once(f):
 def display_win():
     print("Victory")
     print("5898")
+    sys.exit(0)
+
 amplitude_m1, amplitude_m2, frequency1, frequency2, phase_m1, phase_m2 = generate_master()
 anim = animation.FuncAnimation(fig, animate, init_func=init, interval=10, blit=True)
 plt.show()

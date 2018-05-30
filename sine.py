@@ -8,9 +8,6 @@ import serial
 import sys
 import os
 
-### AUDIO LIBRARY
-import pyaudio
-
 #ser = serial.Serial("COM3", 57600)
 ser = serial.Serial("/dev/ttyS0", 57600)
 
@@ -35,18 +32,6 @@ plt.xticks(np.arange(0,xlimit,1))
 x = np.linspace(0, xlimit, xlimit*1000)
 line1, = ax.plot([], [], lw=linewidth)
 line2, = ax.plot([], [], lw=linewidth)
-
-
-# MI - Will be replaced with sine data
-aout = pyaudio.PyAudio()
-astm = aout.open(format=aout.get_format_from_width(2),
-                 channels=1,
-                 rate=44100,
-                 output=True)
-
-
-
-
 
 # initialization function: plot the background of each frame
 def init():
@@ -79,6 +64,7 @@ def animate(i):
     global is_finished
     master_sine = master(i)
     a1, f1, p1, a2, f2, p2 = file_input()
+    print(a1, f1, p1, a2, f2, p2)
     if is_finished == True:
         a1, a2, f1, f2, p1, p2 = generate_master()
         p1 = p1 + 0.05
@@ -93,10 +79,8 @@ def animate(i):
     data = generated.astype(np.int16)
     data = data[::45]
     data = data*32525
-#    adata = ("{:0>2x}" * len(data)).format(*tuple(data[::-1]))
-    astm.write(data)
 
-    if equals(master_sine, generated, 200):
+    if equals(master_sine, generated, 0):
         is_finished = True
         display_win()
     return line1, line2
